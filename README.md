@@ -21,3 +21,5 @@ python gitgrab.py
 ```
 ```gitgrab.py``` has a ui that will handle the rest.
 Gitcredentials will be prompted on private repos, simpily press [Enter] to skip through these. If correct credentials are supplied the repos will be searched.
+
+Henry Samuelson, Chris Hansen
