@@ -5,6 +5,7 @@ Search git repos for key text. Searches all commits, and code stored in the repo
 ## Requirements
 
 Python Version: python3.x <br>
+Unix as pygithub3 is not supported on windows.
 
 ```
 bash install.sh
