@@ -3,7 +3,7 @@
 #
 # Henry Samuelson, Christopher Hansen
 
-# Git got grabed
+# Git got grabbed
 
 import os, pygithub3
 import requests
