@@ -4,6 +4,7 @@
 # Henry Samuelson 6/2/2020
 
 import re
+import os
 
 def parse(filename):
     '''
@@ -14,18 +15,17 @@ def parse(filename):
 
     file = open(filename, 'r')
     line_num = 0
-    possible_lines = []
+    nums = []
     pass_lines = []
     while(True):
         line_num += 1
         line = file.readline().strip()
-        query = re.findall(r"\/[a-zA-Z0-9\s]{1,100}\/",line) #/something/
-        query.append(re.findall(r"\/[a-zA-Z0-9\s\-]{1,100}\/[a-zA-Z0-9\s\-]{1,100}",line)) #/something/something
-        query.append(re.findall(r"\/[a-zA-Z0-9\s\-]{1,100}\/[a-zA-Z0-9\s\-]{1,100}\/[a-zA-Z0-9\s\-]{1,100}",line)) # /something/something/something
+        if line.split() == []: break
+        query = re.findall(r"[\/.][a-zA-Z0-9\s]{1,100}\/",line) #/something/
+        query.append(re.findall(r"[\/.][a-zA-Z0-9\s\-]{1,100}\/[a-zA-Z0-9\s\-]{1,100}",line)) #/something/something
+        query.append(re.findall(r"[\/.][a-zA-Z0-9\s\-]{1,100}\/[a-zA-Z0-9\s\-]{1,100}\/[a-zA-Z0-9\s\-]{1,100}",line)) # /something/something/something
 
-        print(query)
-        if(line.split() == []):
-            break
+
         line_valid = False
         for i in range(0,len(query)):
             # for each found query. Requery the line for password declarations.
@@ -38,12 +38,37 @@ def parse(filename):
                 line_valid = True
                 break
         if line_valid: 
-            pass_lines.append(line_num)
-            possible_lines.append(line)
+            pass_lines.append(line)
+            nums.append(line_num)
+
 
 
     file.close()
-    return pass_lines, possible_lines
+    return nums, pass_lines
 
 print(parse("insecure.sh"))
+x = parse("insecure.sh")
 
+def poke_directory(lines):
+    nums = lines[0]
+    lines = lines[1]
+    #reparse and find the directory name, then check if access exsists
+    hits = []
+    for i in range(0, len(lines)):
+        line = lines[i]
+        # this is inexusable code, I recognize this is horrid in practice.
+        query = re.findall(r"[\/.][a-zA-Z0-9\s\-]{1,100}\/[a-zA-Z0-9\s\-]{1,100}\/[a-zA-Z0-9\s\-]{1,100}",line) # /something/something/something
+        if query == []:
+            query = re.findall(r"[\/.][a-zA-Z0-9\s\-]{1,100}\/[a-zA-Z0-9\s\-]{1,100}",line) #/something/something
+            if query == []:
+                query = re.findall(r"[\/.][a-zA-Z0-9\s]{1,100}\/",line) #/something/
+            if(query != []):
+                direc = query[0] 
+                direc = "cd " + direc
+                if(int(os.system(direc))==0):
+                    hits.append([nums[i], direc])
+                    print("[HIT] @ ln:(" + nums[i] + ") -->" + direc)
+    
+    return hits
+
+poke_directory(x)
