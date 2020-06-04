@@ -21,9 +21,9 @@ def parse(filename):
         line_num += 1
         line = file.readline().strip()
         if line.split() == []: break
-        query = re.findall(r"[\/.][a-zA-Z0-9\s]{1,100}\/",line) #/something/
-        query.append(re.findall(r"[\/.][a-zA-Z0-9\s\-]{1,100}\/[a-zA-Z0-9\s\-]{1,100}",line)) #/something/something
-        query.append(re.findall(r"[\/.][a-zA-Z0-9\s\-]{1,100}\/[a-zA-Z0-9\s\-]{1,100}\/[a-zA-Z0-9\s\-]{1,100}",line)) # /something/something/something
+        query = re.findall(r"[\/.][a-zA-Z0-9\s]{1,100}[\/.]",line) #/something/
+        query.append(re.findall(r"[\/.][a-zA-Z0-9\s\-]{1,100}\/[a-zA-Z0-9\s\-]{1,100}[\/.]",line)) #/something/something
+        query.append(re.findall(r"[\/.][a-zA-Z0-9\s\-]{1,100}\/[a-zA-Z0-9\s\-]{1,100}\/[a-zA-Z0-9\s\-]{1,100}[\/.]",line)) # /something/something/something
 
 
         line_valid = False
