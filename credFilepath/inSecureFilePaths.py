@@ -57,17 +57,17 @@ def poke_directory(lines):
     for i in range(0, len(lines)):
         line = lines[i]
         # this is inexusable code, I recognize this is horrid in practice.
-        query = re.findall(r"[\/.][a-zA-Z0-9\s\-]{1,100}\/[a-zA-Z0-9\s\-]{1,100}\/[a-zA-Z0-9\s\-]{1,100}",line) # /something/something/something
+        query = re.findall(r"[\/.][a-zA-Z0-9\s\-]{1,100}\/[a-zA-Z0-9\s\-]{1,100}\/[a-zA-Z0-9\s\-]{1,100}[\/.]",line) # /something/something/something
         if query == []:
-            query = re.findall(r"[\/.][a-zA-Z0-9\s\-]{1,100}\/[a-zA-Z0-9\s\-]{1,100}",line) #/something/something
+            query = re.findall(r"[\/.][a-zA-Z0-9\s\-]{1,100}\/[a-zA-Z0-9\s\-]{1,100}[\/.]",line) #/something/something
             if query == []:
-                query = re.findall(r"[\/.][a-zA-Z0-9\s]{1,100}\/",line) #/something/
+                query = re.findall(r"[\/.][a-zA-Z0-9\s]{1,100}[\/.]",line) #/something/
             if(query != []):
                 direc = query[0] 
                 direc = "cd " + direc
                 if(int(os.system(direc))==0):
                     hits.append([nums[i], direc])
-                    print("[HIT] @ ln:(" + nums[i] + ") -->" + direc)
+                    print("[HIT] @ ln:(" + str(nums[i]) + ") -->" + direc)
     
     return hits
 
