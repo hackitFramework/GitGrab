@@ -6,63 +6,22 @@
 import re
 import os
 
-def parse(filename):
-    '''
-    Parameters: filename-takes a string
-    Returns:    list of possible lines to attack
-    '''
-    assert type(filename) == str
+def poke_dir(file_path,ln):
+    fp = "cat" + file_path[0] + " > /dev/null 2>&1"
+    if int(os.system(fp)) == 0:
+        print("[HIT] @ ln:(" + str(ln)+") --> " + str(file_path[0]))
+        return [ln,fp]
 
-    file = open(filename, 'r')
-    line_num = 0
-    nums = []
-    pass_lines = []
+def parse_file(file):
+    f = open(file, 'r')
+    insecure_ref=[]
+    l_num = 0
     while(True):
-        line_num += 1
-        line = file.readline().strip()
+        l_num+=1
+        line = f.readline().strip()
         if line.split() == []: break
-        query = re.findall(r"[\/.][a-zA-Z0-9\s]{1,100}(\"|/|$)",line) #/something/
-        query.append(re.findall(r"[\/.][a-zA-Z0-9\s\-]{1,100}\/[a-zA-Z0-9\s\-]{1,100}(\"|/|$)",line)) #/something/something
-        query.append(re.findall(r"[\/.][a-zA-Z0-9\s\-]{1,100}\/[a-zA-Z0-9\s\-]{1,100}\/[a-zA-Z0-9\s\-]{1,100}(\"|/|$)",line)) # /something/something/something
-
-
-        line_valid = False
-        for i in range(0,len(query)):
-            # for each found query. Requery the line for password declarations.
-            rq1 = re.findall(r"password=|pwd=|pass=|cred=|creds=|credentials=|admin=|passwrd=|key=|keys=|pkey=|private[Kkey]=|private.*[Kk]ey$=",line)
-            rq2 = re.findall(r"password =|pwd =|pass =|cred =|creds =|credentials =|admin =|passwrd =|key =|keys =|pkey =|private[Kkey] =|private.*[Kk]ey$ =",line)
-            if rq1 != []:
-                line_valid = True
-                break
-            elif rq2 != []:
-                line_valid = True
-                break
-        if line_valid: 
-            pass_lines.append(line)
-            nums.append(line_num)
-
-
-
-    file.close()
-    return nums, pass_lines
-
-print(parse("insecure.sh"))
-x = parse("insecure.sh")
-
-def poke_directory(lines):
-    nums = lines[0]
-    lines = lines[1]
-    #reparse and find the directory name, then check if access exsists
-    hits = []
-    for i in range(0, len(lines)):
-        query = re.findall(r'\/.*\.[\w:]+', str(lines[i]))
-        if(query != []):
-            direc = query[0] 
-            direc = "cd " + direc
-            if(int(os.system(direc))==0):
-                hits.append([nums[i], direc])
-                print("[HIT] @ ln:(" + str(nums[i]) + ") -->" + direc)
-    
-    return hits
-
-poke_directory(x)
+        q = re.findall(r'\/.*\.[\w:]+'. str(line))
+        if q != []:
+            q1 = re.findall(r"[Pp]assword=|pwd=|PWD=|[Pp]ass=|[Cc]red=|[Cc]reds=|[Cc]redential=|[Cc]redentials=|[Aa]dmin=|passwrd=|[Kk]ey=|[Kk]eys=|private.*[Kk]ey$=",line)
+            q2 = re.findall(r"[Pp]assword =|pwd =|PWD =|[Pp]ass =|[Cc]red =|[Cc]reds =|[Cc]redential =|[Cc]redentials =|[Aa]dmin =|passwrd =|[Kk]ey =|[Kk]eys =|private.*[Kk]ey$ =",line)
+            if (q1 != [] and q1 != ['"']) | (q2 != [] and q2 != ['"']): insecure_ref.append(poke_dir(q,l_num))
